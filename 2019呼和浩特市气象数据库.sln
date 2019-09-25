@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2019HSQXSJK", "..\2019HSQXSJK\2019HSQXSJK.csproj", "{A8583666-28E0-4BBD-8879-63E602670CAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8583666-28E0-4BBD-8879-63E602670CAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8583666-28E0-4BBD-8879-63E602670CAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8583666-28E0-4BBD-8879-63E602670CAC}.Debug|x86.ActiveCfg = Debug|x86
+		{A8583666-28E0-4BBD-8879-63E602670CAC}.Debug|x86.Build.0 = Debug|x86
+		{A8583666-28E0-4BBD-8879-63E602670CAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8583666-28E0-4BBD-8879-63E602670CAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8583666-28E0-4BBD-8879-63E602670CAC}.Release|x86.ActiveCfg = Release|Any CPU
+		{A8583666-28E0-4BBD-8879-63E602670CAC}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2505F0FA-9574-4047-8674-51B0A73E93A5}
+	EndGlobalSection
+EndGlobal
