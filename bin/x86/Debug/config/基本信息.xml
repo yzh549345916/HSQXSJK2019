@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<XmlConfig>
+  <GJTime>
+    <HH08>4</HH08>
+    <MM08>30</MM08>
+    <HH20>12</HH20>
+    <MM20>30</MM20>
+  </GJTime>
+  <QJTime>
+    <HH08>6</HH08>
+    <MM08>30</MM08>
+    <HH20>12</HH20>
+    <MM20>30</MM20>
+  </QJTime>
+  <ECTime>
+    <HH08>14</HH08>
+    <MM08>40</MM08>
+    <HH20>12</HH20>
+    <MM20>30</MM20>
+  </ECTime>
+  <YBTime>
+    <HH08>5</HH08>
+    <MM08>11</MM08>
+    <HH20>15</HH20>
+    <MM20>20</MM20>
+  </YBTime>
+  <OtherConfig>
+    <DB>
+      <Server>.;Database=呼市气象资料数据库;</Server>
+      <Database>yqiihbLyGu3J7cbT3fJrAfGKbFVhL3NN8CDI14xD9/I=</Database>
+    </DB>
+  </OtherConfig>
+</XmlConfig>
