@@ -16,17 +16,26 @@ namespace _2019HSQXSJK
         public MainWindow()
         {
             InitializeComponent();
-            //Thread thread = new Thread(cs);
-            //thread.Start();
+
+            //rkcs();
+
+
         }
 
+        public void rkcs()
+        {
+            数据库处理 sjkcl = new 数据库处理();
+            DateTime dateTime = Convert.ToDateTime("2019-07-01 13:50:00");
+            sjkcl.统计信息入库(dateTime.Date, DateTime.Now);
+            sjkcl = null;
+        }
         public void cs()
         {
             数据库处理 sjkcl = new 数据库处理();
-            DateTime dateTime = Convert.ToDateTime("2019-09-24 09:55:00");
+            DateTime dateTime = Convert.ToDateTime("2019-09-26 15:20:00");
             while (dateTime.CompareTo(DateTime.Now) <= 0)
             {
-                string str = sjkcl.分钟降水量入库(dateTime.AddMinutes(-5), dateTime);
+                string str = sjkcl.分钟降水量入库(dateTime.AddMinutes(-4), dateTime);
                 dateTime = dateTime.AddMinutes(5);
                 t1.Dispatcher.BeginInvoke(new Action(delegate
                 {

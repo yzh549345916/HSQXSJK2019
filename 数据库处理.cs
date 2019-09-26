@@ -103,6 +103,102 @@ namespace _2019HSQXSJK
 
             return rktj;
         }
+        /// <summary>
+        /// 将指定起止时间范围内的数据库统计情况保存至
+        /// </summary>
+        /// <param name="sDate"></param>
+        /// <param name="eDate"></param>
+        public void 统计信息入库(DateTime sDate, DateTime eDate)
+        {
+            DataTable dataTable = 获取指定时间范围表名小时入库信息("SK_Pre_Minute", sDate, eDate);
+            SqlBulkCopyByDatatable(_con, "入库个数统计信息_LS", dataTable);
+        }
+        /// <summary>
+        /// 获取指定时间范围、指定表名的分钟级入库信息
+        /// </summary>
+        /// <param name="表名"></param>
+        /// <param name="sDate"></param>
+        /// <param name="eDate"></param>
+        /// <returns></returns>
+        public DataTable 获取指定时间范围表名分钟入库信息(string 表名, DateTime sDate, DateTime eDate)
+        {
+            DataTable dt = new DataTable("入库个数统计信息_LS");
+            dt.Columns.Add("表名", Type.GetType("System.String"));
+            dt.Columns.Add("时间", Type.GetType("System.DateTime"));
+            dt.Columns.Add("个数", Type.GetType("System.Int32"));
+            using (SqlConnection mycon = new SqlConnection(_con))
+            {
+                try
+                {
+                    mycon.Open(); //打开
+                    string sql = $"select count(1) 个数,DateTime 时间 from {表名} where DateTime between '{sDate}' and '{eDate}' group by DateTime";
+                    SqlCommand sqlman = new SqlCommand(sql, mycon);
+                    SqlDataReader sqlreader = sqlman.ExecuteReader();
+
+                    while (sqlreader.Read())
+                    {
+                        try
+                        {
+                            DataRow dr = dt.NewRow();
+                            dr["表名"] = 表名;
+                            dr["时间"] = sqlreader.GetDateTime(sqlreader.GetOrdinal("时间"));
+                            dr["个数"] = sqlreader.GetInt32(sqlreader.GetOrdinal("个数"));
+                            dt.Rows.Add(dr);
+                        }
+                        catch(Exception e)
+                        {
+                        }
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\n";
+                }
+            }
+
+            return dt;
+        }
+
+        public DataTable 获取指定时间范围表名小时入库信息(string 表名, DateTime sDate, DateTime eDate)
+        {
+            DataTable dt = new DataTable("入库个数统计信息_LS");
+            dt.Columns.Add("表名", Type.GetType("System.String"));
+            dt.Columns.Add("时间", Type.GetType("System.DateTime"));
+            dt.Columns.Add("个数", Type.GetType("System.Int32"));
+            using (SqlConnection mycon = new SqlConnection(_con))
+            {
+                try
+                {
+                    mycon.Open(); //打开
+                    string sql = $"select count(1) 个数,(dateadd(hh,datepart(hh,DateTime),CONVERT(varchar(10), DateTime, 23))) 时间 from {表名} where DateTime between '{sDate.ToString("yyyy-MM-dd HH:00:00")}' and '{eDate.ToString("yyyy-MM-dd HH:59:59")}' group by (dateadd(hh,datepart(hh,DateTime),CONVERT(varchar(10), DateTime, 23)))";
+                    SqlCommand sqlman = new SqlCommand(sql, mycon);
+                    SqlDataReader sqlreader = sqlman.ExecuteReader();
+
+                    while (sqlreader.Read())
+                    {
+                        try
+                        {
+                            DataRow dr = dt.NewRow();
+                            dr["表名"] = 表名;
+                            dr["时间"] = sqlreader.GetDateTime(sqlreader.GetOrdinal("时间"));
+                            dr["个数"] = sqlreader.GetInt32(sqlreader.GetOrdinal("个数"));
+                            dt.Rows.Add(dr);
+                        }
+                        catch (Exception e)
+                        {
+                        }
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\n";
+                }
+            }
+
+            return dt;
+        }
 
         public string 分钟降水量入库(DateTime sDate, DateTime eDate)
         {
@@ -151,7 +247,7 @@ namespace _2019HSQXSJK
                 return "";
             SqlBulkCopyByDatatable(_con, "SK_Pre_Minute_LS", dt);
             string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条降水量数据。\n";
-
+            统计信息入库(sDate, eDate);
             dt = null;
             return fhStr;
         }
@@ -174,10 +270,10 @@ namespace _2019HSQXSJK
                     {
                         sqlbulkcopy.ColumnMappings.Add(dt.Columns[i].ColumnName, dt.Columns[i].ColumnName);
                     }
-
                     sqlbulkcopy.WriteToServer(dt);
+                    dt = null;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                 }
             }
