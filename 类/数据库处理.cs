@@ -12,7 +12,7 @@ namespace _2019HSQXSJK
     {
         private string _con = "";
         private string _error = "";
-
+        string adminCodes = "";
         public 数据库处理()
         {
             try
@@ -22,11 +22,30 @@ namespace _2019HSQXSJK
                 //解密连接数据库字符串
                 DecryptAndEncryptionHelper helper = new DecryptAndEncryptionHelper(ConfigInformation.Key, ConfigInformation.Vector);
                 _con = _con + helper.Decrypto(util.Read("OtherConfig", "DB", "Database"));
+                adminCodes = 获取实况站点范围(0, 0, 0);
             }
             catch (Exception ex)
             {
                 _error = ex.Message + "\r\n";
             }
+        }
+        public 数据库处理(string myadminCodes)
+        {
+            try
+            {
+                XmlConfig util = new XmlConfig(Environment.CurrentDirectory + @"\config\基本信息.xml");
+                _con = "Server=" + util.Read("OtherConfig", "DB", "Server");
+                //解密连接数据库字符串
+                DecryptAndEncryptionHelper helper = new DecryptAndEncryptionHelper(ConfigInformation.Key, ConfigInformation.Vector);
+                _con = _con + helper.Decrypto(util.Read("OtherConfig", "DB", "Database"));
+                adminCodes = myadminCodes;
+            }
+            catch (Exception ex)
+            {
+                _error = ex.Message + "\r\n";
+            }
+           
+
         }
 
         /// <summary>
@@ -108,9 +127,9 @@ namespace _2019HSQXSJK
         /// </summary>
         /// <param name="sDate"></param>
         /// <param name="eDate"></param>
-        public void 统计信息入库(DateTime sDate, DateTime eDate)
+        public void 统计信息入库(string 表名,DateTime sDate, DateTime eDate)
         {
-            DataTable dataTable = 获取指定时间范围表名小时入库信息("SK_Pre_Minute", sDate, eDate);
+            DataTable dataTable = 获取指定时间范围表名小时入库信息(表名, sDate, eDate);
             SqlBulkCopyByDatatable(_con, "入库个数统计信息_LS", dataTable);
         }
         /// <summary>
@@ -202,7 +221,7 @@ namespace _2019HSQXSJK
 
         public string 分钟降水量入库(DateTime sDate, DateTime eDate)
         {
-            string adminCodes = 获取实况站点范围(0, 0, 0);
+           
             if (adminCodes.Trim().Length == 0)
                 return "";
             CIMISS获取数据 cIMISS = new CIMISS获取数据();
@@ -229,6 +248,8 @@ namespace _2019HSQXSJK
                     float fls = Convert.ToSingle(szls[2]);
                     if (fls > 0 && fls < 999900)
                     {
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{Convert.ToDateTime(szls[0]).ToLocalTime()}'").Length > 0)
+                            break;
                         DataRow dr = dt.NewRow();
                         dr["StationID"] = szls[1];
                         dr["DateTime"] = Convert.ToDateTime(szls[0]).ToLocalTime();
@@ -247,11 +268,248 @@ namespace _2019HSQXSJK
                 return "";
             SqlBulkCopyByDatatable(_con, "SK_Pre_Minute_LS", dt);
             string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条降水量数据。\n";
-            统计信息入库(sDate, eDate);
+            统计信息入库("SK_Pre_Minute", sDate, eDate);
             dt = null;
             return fhStr;
         }
 
+        public string 分钟常规温度入库(DateTime sDate, DateTime eDate)
+        {
+          if (adminCodes.Trim().Length == 0)
+                return "";
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_Tem_Minute_byTimeRangeAndRegion_SURF_CHN_MAIN_MIN(sDate, eDate, adminCodes);
+            if (myData.Trim().Length == 0)
+                return "";
+            string[] szData = myData.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            if (szData.Length <= 2)
+                return "";
+            //List<DanYS> danYs = new List<DanYS>();
+            DataTable dt = new DataTable("SK_Tem_Minute_LS1");
+            dt.Columns.Add("StationID", Type.GetType("System.String"));
+            dt.Columns.Add("DateTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("Tem_Minute", Type.GetType("System.Single"));
+
+            for (int i = 2; i < szData.Length; i++)
+            {
+                try
+                {
+                    string[] szls = szData[i].Split('\t');
+                    float fls = Convert.ToSingle(szls[2]);
+                    if (fls > -999900 && fls < 999900)
+                    {
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{Convert.ToDateTime(szls[0]).ToLocalTime()}'").Length > 0)
+                            break;
+                        DataRow dr = dt.NewRow();
+                        dr["StationID"] = szls[1];
+                        dr["DateTime"] = Convert.ToDateTime(szls[0]).ToLocalTime();
+                        dr["Tem_Minute"] = fls;
+                        dt.Rows.Add(dr);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\r\n";
+                }
+            }
+
+            if (dt.Rows.Count == 0)
+                return "";
+            SqlBulkCopyByDatatable(_con, "SK_Tem_Minute_LS1", dt);
+            string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条常规温度分钟数据。\n";
+            统计信息入库("SK_Tem_Minute",sDate, eDate);
+            dt = null;
+            return fhStr;
+        }
+        public string 分钟其他温度入库(DateTime sDate, DateTime eDate)
+        {
+            if (adminCodes.Trim().Length == 0)
+                return "";
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_Tem_Minute_byTimeRangeAndRegion_SURF_CHN_OTHER_MIN(sDate, eDate, adminCodes);
+            if (myData.Trim().Length == 0)
+                return "";
+            string[] szData = myData.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            if (szData.Length <= 2)
+                return "";
+            //List<DanYS> danYs = new List<DanYS>();
+            
+            DataTable dt = new DataTable("SK_Tem_Minute_LS2");
+            dt.Columns.Add("StationID", Type.GetType("System.String"));
+            dt.Columns.Add("DateTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("Tem_Max_Minute", Type.GetType("System.Single"));
+            dt.Columns.Add("Tem_Max_Time_Minute", Type.GetType("System.DateTime"));
+            dt.Columns.Add("Tem_Min_Minute", Type.GetType("System.Single"));
+            dt.Columns.Add("Tem_Min_Time_Minute", Type.GetType("System.DateTime"));
+            for (int i = 2; i < szData.Length; i++)
+            {
+                try
+                {
+                    string[] szls = szData[i].Split('\t');
+                    float fls = Convert.ToSingle(szls[2]);
+                    float fls2 = Convert.ToSingle(szls[4]);
+                    if (fls2 < 999900 && fls < 999900)
+                    {
+                        DateTime dtls = Convert.ToDateTime(szls[0]);
+                        DataRow dr = dt.NewRow();
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{dtls.ToLocalTime()}'").Length>0)
+                            break;
+                        dr["StationID"] = szls[1];
+                        dr["DateTime"] = dtls.ToLocalTime();
+                        dr["Tem_Max_Minute"] = fls;
+                        dr["Tem_Min_Minute"] = fls2;
+                        dr["Tem_Max_Time_Minute"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[3])).ToLocalTime();
+                        dr["Tem_Min_Time_Minute"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[5])).ToLocalTime();
+                        dt.Rows.Add(dr);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\r\n";
+                }
+            }
+
+            if (dt.Rows.Count == 0)
+                return "";
+            SqlBulkCopyByDatatable(_con, "SK_Tem_Minute_LS2", dt);
+            string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条其他温度分钟数据。\n";
+            dt = null;
+            return fhStr;
+        }
+        public DateTime CIMISSDateTimeMinuteConvert(DateTime dateTime,string time)
+        {
+            DateTime myDate = dateTime;
+            time = time.PadLeft(4, '0');
+            try
+            {
+                myDate = dateTime.Date.AddHours(Convert.ToInt32(time.Substring(0, 2))).AddMinutes(Convert.ToInt32(time.Substring(2, 2)));
+                if ((myDate - dateTime).TotalHours > 1)
+                    myDate = myDate.AddDays(-1);
+            }
+            catch
+            {
+            }
+            return myDate;
+        }
+        public string 分钟常规气压入库(DateTime sDate, DateTime eDate)
+        {
+            if (adminCodes.Trim().Length == 0)
+                return "";
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_PRS_Minute_byTimeRangeAndRegion_SURF_CHN_MAIN_MIN(sDate, eDate, adminCodes);
+            if (myData.Trim().Length == 0)
+                return "";
+            string[] szData = myData.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            if (szData.Length <= 2)
+                return "";
+            //List<DanYS> danYs = new List<DanYS>();
+            DataTable dt = new DataTable("SK_PRS_Minute_LS1");
+            dt.Columns.Add("StationID", Type.GetType("System.String"));
+            dt.Columns.Add("DateTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("PRS_Minute", Type.GetType("System.Single"));
+
+            for (int i = 2; i < szData.Length; i++)
+            {
+                try
+                {
+                    string[] szls = szData[i].Split('\t');
+                    float fls = Convert.ToSingle(szls[2]);
+                    if (fls > -999900 && fls < 999900)
+                    {
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{Convert.ToDateTime(szls[0]).ToLocalTime()}'").Length > 0)
+                            break;
+                        DataRow dr = dt.NewRow();
+                        dr["StationID"] = szls[1];
+                        dr["DateTime"] = Convert.ToDateTime(szls[0]).ToLocalTime();
+                        dr["PRS_Minute"] = fls;
+                        dt.Rows.Add(dr);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\r\n";
+                }
+            }
+
+            if (dt.Rows.Count == 0)
+                return "";
+            SqlBulkCopyByDatatable(_con, "SK_PRS_Minute_LS1", dt);
+            string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条常规气压分钟数据。\n";
+            统计信息入库("SK_PRS_Minute",sDate, eDate);
+            dt = null;
+            return fhStr;
+        }
+        public string 分钟其他气压入库(DateTime sDate, DateTime eDate)
+        {
+            if (adminCodes.Trim().Length == 0)
+                return "";
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_PRS_Minute_byTimeRangeAndRegion_SURF_CHN_OTHER_MIN(sDate, eDate, adminCodes);
+            if (myData.Trim().Length == 0)
+                return "";
+            string[] szData = myData.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            if (szData.Length <= 2)
+                return "";
+            //List<DanYS> danYs = new List<DanYS>();
+
+            DataTable dt = new DataTable("SK_PRS_Minute_LS2");
+            dt.Columns.Add("StationID", Type.GetType("System.String"));
+            dt.Columns.Add("DateTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("PRS_Max_Minute", Type.GetType("System.Single"));
+            dt.Columns.Add("PRS_Max_Time_Minute", Type.GetType("System.DateTime"));
+            dt.Columns.Add("PRS_Min_Minute", Type.GetType("System.Single"));
+            dt.Columns.Add("PRS_Min_Time_Minute", Type.GetType("System.DateTime"));
+            for (int i = 2; i < szData.Length; i++)
+            {
+                try
+                {
+                    string[] szls = szData[i].Split('\t');
+                    float fls = Convert.ToSingle(szls[2]);
+                    float fls2 = Convert.ToSingle(szls[4]);
+                    if (fls2 < 999900 && fls < 999900)
+                    {
+                        DateTime dtls = Convert.ToDateTime(szls[0]);
+                        DataRow dr = dt.NewRow();
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{dtls.ToLocalTime()}'").Length > 0)
+                            break;
+                        dr["StationID"] = szls[1];
+                        dr["DateTime"] = dtls.ToLocalTime();
+                        dr["PRS_Max_Minute"] = fls;
+                        dr["PRS_Min_Minute"] = fls2;
+                        dr["PRS_Max_Time_Minute"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[3])).ToLocalTime();
+                        dr["PRS_Min_Time_Minute"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[5])).ToLocalTime();
+                        dt.Rows.Add(dr);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\r\n";
+                }
+            }
+
+            if (dt.Rows.Count == 0)
+                return "";
+            SqlBulkCopyByDatatable(_con, "SK_PRS_Minute_LS2", dt);
+            string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条其他气压分钟数据。\n";
+            dt = null;
+            return fhStr;
+        }
         #region  SqlBulkCopy批量快速入库
         /// <summary>
         /// SqlBulkCopy批量快速入库

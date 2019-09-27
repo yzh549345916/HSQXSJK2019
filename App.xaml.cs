@@ -16,7 +16,9 @@ namespace _2019HSQXSJK
         protected override void OnStartup(StartupEventArgs e)
         {
             new MainWindow().Show();
+
             base.OnStartup(e);
+
         }
     }
 }

@@ -13,36 +13,92 @@ namespace _2019HSQXSJK
     /// </summary>
     public partial class MainWindow : RadWindow
     {
-        private NotifyIcon _notifyIcon = null;
+        System.Timers.Timer timer = new System.Timers.Timer(60000);
+        string adminCodes = "";
         public MainWindow()
         {
 
-            LocalizationManager.Manager = new LocalizationManager()
+            try
             {
-                ResourceManager = GridViewResources.ResourceManager
-            };
-            InitializeComponent();
-            Settheme settheme1 = new Settheme();
-            StyleManager.SetTheme(this, GetMyTheme("Crystal"));
-            settheme1.setTheme(settheme1.setLightOrDark("Crystal"));
-            StyleManager.ApplicationTheme = GetMyTheme("Crystal");
+                LocalizationManager.Manager = new LocalizationManager()
+                {
+                    ResourceManager = GridViewResources.ResourceManager
+                };
+                InitializeComponent();
+
+                Settheme settheme1 = new Settheme();
+                StyleManager.SetTheme(this, GetMyTheme("Crystal"));
+                settheme1.setTheme(settheme1.setLightOrDark("Crystal"));
+                StyleManager.ApplicationTheme = GetMyTheme("Crystal");
+                timer.Elapsed += new System.Timers.ElapsedEventHandler(refreshTime);
+                timer.AutoReset = true;//设置是执行一次（false）还是一直执行(true)；  
+                timer.Enabled = true;//是否执行System.Timers.Timer.Elapsed事件；
+                数据库处理 sjkcl = new 数据库处理();
+                adminCodes = sjkcl.获取实况站点范围(0, 0, 0);
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += $"{DateTime.Now}  启动呼和浩特市气象资料数据库\n";
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
+            catch(Exception e)
+            {
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += $"{DateTime.Now}  启动失败:{e.Message}\n";
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
 
             //rkcs();
 
 
         }
-
-        public void rkcs()
+        public void refreshTime(object source, System.Timers.ElapsedEventArgs e)
         {
-            数据库处理 sjkcl = new 数据库处理();
-            DateTime dateTime = Convert.ToDateTime("2019-07-01 13:50:00");
-            sjkcl.统计信息入库(dateTime.Date, DateTime.Now);
-            sjkcl = null;
+            Task.Factory.StartNew(() =>
+            {
+                PreMinuteRk();
+                
+            });
+            Task.Factory.StartNew(() =>
+            {
+                TEMMinuteRk();
+
+            });
+            Task.Factory.StartNew(() =>
+            {
+                PRSMinuteRk();
+
+            });
+            DateTime dateTime = DateTime.Now;
+            if (dateTime.Minute %5==1)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    TEMMinuteRk_5minutes();
+                    PRSMinuteRk_5minutes();
+                });
+            }
+                //每天00:21恢复前三天的数据
+            if (dateTime.Hour==0&& dateTime.Minute==21)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    HFRk();
+                });
+            }
         }
+
+        
         public void cs()
         {
             数据库处理 sjkcl = new 数据库处理();
-            DateTime dateTime = Convert.ToDateTime("2019-09-26 15:20:00");
+            DateTime dateTime = Convert.ToDateTime("2019-09-27 00:20:00");
             while (dateTime.CompareTo(DateTime.Now) <= 0)
             {
                 string str = sjkcl.分钟降水量入库(dateTime.AddMinutes(-4), dateTime);
@@ -54,6 +110,139 @@ namespace _2019HSQXSJK
                     t1.Focus();
                     t1.CaretIndex = t1.Text.Length;
                 }), DispatcherPriority.Normal);
+            }
+        }
+        public void temcs()
+        {
+            数据库处理 sjkcl = new 数据库处理();
+            DateTime dateTime = Convert.ToDateTime("2019-07-05 13:40:00");
+            while (dateTime.CompareTo(DateTime.Now) <= 0)
+            {
+                string str = sjkcl.分钟常规温度入库(dateTime.AddMinutes(-9), dateTime);
+                sjkcl.分钟其他温度入库(dateTime.AddMinutes(-9), dateTime);
+                dateTime = dateTime.AddMinutes(10);
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += str;
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
+        }
+        public void PRScs()
+        {
+            数据库处理 sjkcl = new 数据库处理();
+            DateTime dateTime = Convert.ToDateTime("2019-07-01 10:00:00");
+            while (dateTime.CompareTo(DateTime.Now) <= 0)
+            {
+                string str = sjkcl.分钟常规气压入库(dateTime.AddMinutes(-9), dateTime);
+                sjkcl.分钟其他气压入库(dateTime.AddMinutes(-9), dateTime);
+                dateTime = dateTime.AddMinutes(10);
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += str;
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
+        }
+        public void PreMinuteRk()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str = sjkcl.分钟降水量入库(DateTime.Now.AddMinutes(-4), DateTime.Now);
+            if(str.Length>0)
+            {
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += str;
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
+        }
+        public void TEMMinuteRk()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str = sjkcl.分钟常规温度入库(DateTime.Now.AddMinutes(-5), DateTime.Now);
+            
+            if (str.Length > 0)
+            {
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += str;
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
+        }
+        public void TEMMinuteRk_5minutes()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str=sjkcl.分钟其他温度入库(DateTime.Now.AddMinutes(-11), DateTime.Now);
+            if (str.Length > 0)
+            {
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += str;
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
+        }
+        public void PRSMinuteRk()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str = sjkcl.分钟常规气压入库(DateTime.Now.AddMinutes(-5), DateTime.Now);
+
+            if (str.Length > 0)
+            {
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += str;
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
+        }
+        public void PRSMinuteRk_5minutes()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str = sjkcl.分钟其他气压入库(DateTime.Now.AddMinutes(-11), DateTime.Now);
+            if (str.Length > 0)
+            {
+                t1.Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    t1.Text += str;
+                    //将光标移至文本框最后
+                    t1.Focus();
+                    t1.CaretIndex = t1.Text.Length;
+                }), DispatcherPriority.Normal);
+            }
+        }
+        /// <summary>
+        /// 恢复前三天的数据
+        /// </summary>
+        public void HFRk()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            DateTime sdate = DateTime.Now.Date.AddDays(-3), edate = DateTime.Now.Date;
+            DateTime dateTime = sdate;
+            while (dateTime.CompareTo(edate) <= 0)
+            {
+                try
+                {
+                    sjkcl.分钟降水量入库(dateTime.AddMinutes(-9), dateTime);
+                    dateTime = dateTime.AddMinutes(10);
+                }
+                catch
+                {
+                }
             }
         }
         /// <summary>
@@ -184,6 +373,23 @@ namespace _2019HSQXSJK
                 return new Expression_DarkTheme();
             }
             return new CrystalTheme();
+        }
+
+        private void RadButton_Click(object sender, RoutedEventArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                temcs();
+            });
+            
+        }
+
+        private void RadButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                PRScs();
+            });
         }
     }
 }

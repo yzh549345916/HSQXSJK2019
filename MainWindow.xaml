@@ -4,15 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:navigation="clr-namespace:Telerik.Windows.Controls.Navigation;assembly=Telerik.Windows.Controls.Navigation" 
         Header="呼和浩特市气象资料数据库"
         WindowStartupLocation="CenterScreen"
         CanClose="False"
         FontSize="20"
         FontFamily="楷体"
+         navigation:RadWindowInteropHelper.ClipMaskCornerRadius="0" 
+        navigation:RadWindowInteropHelper.Title="Custom Window" 
+        navigation:RadWindowInteropHelper.ShowInTaskbar="True"
         Height="550" Width="1000" >
     <Grid>
         <TextBox x:Name="t1" HorizontalAlignment="Left" Height="450" Margin="46,31,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" TextChanged="T1_TextChanged_1" />
         <telerik:RadButton Content="分钟降水量" HorizontalAlignment="Left" Margin="800,53,0,0" VerticalAlignment="Top" Width="120" Height="30" Click="Button_Click" FontSize="15"/>
+        <telerik:RadButton Content="分钟温度" HorizontalAlignment="Left" Margin="800,101,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click"/>
+        <telerik:RadButton Content="气压温度" HorizontalAlignment="Left" Margin="800,154,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_1"/>
 
     </Grid>
 </telerik:RadWindow>
