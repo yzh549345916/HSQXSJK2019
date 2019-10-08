@@ -510,6 +510,275 @@ namespace _2019HSQXSJK
             dt = null;
             return fhStr;
         }
+        public string 分钟常规湿度入库(DateTime sDate, DateTime eDate)
+        {
+            if (adminCodes.Trim().Length == 0)
+                return "";
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_RHU_Minute_byTimeRangeAndRegion_SURF_CHN_MAIN_MIN(sDate, eDate, adminCodes);
+            if (myData.Trim().Length == 0)
+                return "";
+            string[] szData = myData.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            if (szData.Length <= 2)
+                return "";
+            //List<DanYS> danYs = new List<DanYS>();
+            DataTable dt = new DataTable("SK_RHU_Minute_LS1");
+            dt.Columns.Add("StationID", Type.GetType("System.String"));
+            dt.Columns.Add("DateTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("RHU_Minute", Type.GetType("System.Single"));
+
+            for (int i = 2; i < szData.Length; i++)
+            {
+                try
+                {
+                    string[] szls = szData[i].Split('\t');
+                    float fls = Convert.ToSingle(szls[2]);
+                    if (fls >=0 && fls < 999990)
+                    {
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{Convert.ToDateTime(szls[0]).ToLocalTime()}'").Length > 0)
+                            break;
+                        DataRow dr = dt.NewRow();
+                        dr["StationID"] = szls[1];
+                        dr["DateTime"] = Convert.ToDateTime(szls[0]).ToLocalTime();
+                        dr["RHU_Minute"] = fls;
+                        dt.Rows.Add(dr);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\r\n";
+                }
+            }
+
+            if (dt.Rows.Count == 0)
+                return "";
+            SqlBulkCopyByDatatable(_con, "SK_RHU_Minute_LS1", dt);
+            string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条常规湿度分钟数据。\n";
+            统计信息入库("SK_RHU_Minute", sDate, eDate);
+            dt = null;
+            return fhStr;
+        }
+        public string 分钟其他湿度入库(DateTime sDate, DateTime eDate)
+        {
+            if (adminCodes.Trim().Length == 0)
+                return "";
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_RHU_Minute_byTimeRangeAndRegion_SURF_CHN_OTHER_MIN(sDate, eDate, adminCodes);
+            if (myData.Trim().Length == 0)
+                return "";
+            string[] szData = myData.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            if (szData.Length <= 2)
+                return "";
+            //List<DanYS> danYs = new List<DanYS>();
+
+            DataTable dt = new DataTable("SK_RHU_Minute_LS2");
+            dt.Columns.Add("StationID", Type.GetType("System.String"));
+            dt.Columns.Add("DateTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("DPT_Minute", Type.GetType("System.Single"));
+            dt.Columns.Add("RHU_Min_Minute", Type.GetType("System.Single"));
+            dt.Columns.Add("RHU_Min_Time_Minute", Type.GetType("System.DateTime"));
+            dt.Columns.Add("VAP_Minute", Type.GetType("System.Single"));
+            for (int i = 2; i < szData.Length; i++)
+            {
+                try
+                {
+                    string[] szls = szData[i].Split('\t');
+                    float fls = Convert.ToSingle(szls[2]);
+                    float fls2 = Convert.ToSingle(szls[3]);
+                    if (fls2 < 999990 && fls < 999990)
+                    {
+                        DateTime dtls = Convert.ToDateTime(szls[0]);
+                        DataRow dr = dt.NewRow();
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{dtls.ToLocalTime()}'").Length > 0)
+                            break;
+                        dr["StationID"] = szls[1];
+                        dr["DateTime"] = dtls.ToLocalTime();
+                        dr["DPT_Minute"] = fls;
+                        dr["RHU_Min_Minute"] = fls2;
+                        dr["RHU_Min_Time_Minute"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[4])).ToLocalTime();
+                        dr["VAP_Minute"] = Convert.ToSingle(szls[5]);
+                        dt.Rows.Add(dr);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\r\n";
+                }
+            }
+
+            if (dt.Rows.Count == 0)
+                return "";
+            SqlBulkCopyByDatatable(_con, "SK_RHU_Minute_LS2", dt);
+            string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条其他湿度分钟数据。\n";
+            dt = null;
+            return fhStr;
+        }
+        public string 分钟其他风入库(DateTime sDate, DateTime eDate)
+        {
+            if (adminCodes.Trim().Length == 0)
+                return "";
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_WIND_Minute_byTimeRangeAndRegion_SURF_CHN_OTHER_MIN(sDate, eDate, adminCodes);
+            if (myData.Trim().Length == 0)
+                return "";
+            string[] szData = myData.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            if (szData.Length <= 2)
+                return "";
+            //List<DanYS> danYs = new List<DanYS>();
+
+            DataTable dt = new DataTable("SK_Wind_Minute_LS2");
+            dt.Columns.Add("StationID", Type.GetType("System.String"));
+            dt.Columns.Add("DateTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("WIN_D_Avg_2mi", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_S_Avg_2mi", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_D_Avg_10mi", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_S_Avg_10mi", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_D_S_Max", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_S_Max", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_S_Max_OTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("WIN_D_INST", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_S_INST", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_D_INST_Max", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_S_Inst_Max", Type.GetType("System.Single"));
+            dt.Columns.Add("WIN_S_INST_Max_OTime", Type.GetType("System.DateTime"));
+            for (int i = 2; i < szData.Length; i++)
+            {
+                try
+                {
+                    string[] szls = szData[i].Split('\t');
+                    float fls = Convert.ToSingle(szls[3]);
+                    if (fls >= 0 && fls < 999990)
+                    {
+                        DateTime dtls = Convert.ToDateTime(szls[0]);
+                        DataRow dr = dt.NewRow();
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{dtls.ToLocalTime()}'").Length > 0)
+                            break;
+                        dr["StationID"] = szls[1];
+                        dr["DateTime"] = dtls.ToLocalTime();
+                        dr["WIN_D_Avg_2mi"] = Convert.ToSingle(szls[2]);
+                        dr["WIN_S_Avg_2mi"] = fls;
+                        dr["WIN_D_Avg_10mi"] = Convert.ToSingle(szls[4]);
+                        dr["WIN_S_Avg_10mi"] = Convert.ToSingle(szls[5]);
+                        dr["WIN_D_S_Max"] = Convert.ToSingle(szls[6]);
+                        dr["WIN_S_Max"] = Convert.ToSingle(szls[7]);
+                        dr["WIN_S_Max_OTime"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[8])).ToLocalTime();
+                        dr["WIN_D_INST"] = Convert.ToSingle(szls[9]);
+                        dr["WIN_S_INST"] = Convert.ToSingle(szls[10]);
+                        dr["WIN_D_INST_Max"] = Convert.ToSingle(szls[11]);
+                        dr["WIN_S_Inst_Max"] = Convert.ToSingle(szls[12]);
+                        dr["WIN_S_INST_Max_OTime"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[13])).ToLocalTime();
+                        dt.Rows.Add(dr);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\n";
+                }
+            }
+
+            if (dt.Rows.Count == 0)
+                return "";
+            SqlBulkCopyByDatatable(_con, "SK_Wind_Minute_LS2", dt);
+            string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条分钟风数据。\n";
+            统计信息入库("SK_Wind_Minute", sDate, eDate);
+            dt = null;
+            return fhStr;
+        }
+        public string 分钟其他资料入库(DateTime sDate, DateTime eDate)
+        {
+            if (adminCodes.Trim().Length == 0)
+                return "";
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_Other_Minute_byTimeRangeAndRegion_SURF_CHN_OTHER_MIN(sDate, eDate, adminCodes);
+            if (myData.Trim().Length == 0)
+                return "";
+            string[] szData = myData.Split(new[]
+            {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
+            if (szData.Length <= 2)
+                return "";
+            //List<DanYS> danYs = new List<DanYS>();
+
+            DataTable dt = new DataTable("SK_Other_Minute_LS2");
+            dt.Columns.Add("StationID", Type.GetType("System.String"));
+            dt.Columns.Add("DateTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("EVP_Big", Type.GetType("System.Single"));
+            dt.Columns.Add("GST_Max", Type.GetType("System.Single"));
+            dt.Columns.Add("GST_Max_Otime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("GST_Min", Type.GetType("System.Single"));
+            dt.Columns.Add("GST_Min_OTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("GST_80cm", Type.GetType("System.Single"));
+            dt.Columns.Add("GST_160cm", Type.GetType("System.Single"));
+            dt.Columns.Add("GST_320cm", Type.GetType("System.Single"));
+            dt.Columns.Add("LGST_Max", Type.GetType("System.Single"));
+            dt.Columns.Add("LGST_Max_OTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("LGST_Min", Type.GetType("System.Single"));
+            dt.Columns.Add("LGST_Min_OTime", Type.GetType("System.DateTime"));
+            dt.Columns.Add("VIS_HOR_1MI", Type.GetType("System.Single"));
+            dt.Columns.Add("VIS_HOR_10MI", Type.GetType("System.Single"));
+            dt.Columns.Add("VIS_Min", Type.GetType("System.Single"));
+            dt.Columns.Add("VIS_Min_OTime", Type.GetType("System.DateTime"));
+            for (int i = 2; i < szData.Length; i++)
+            {
+                try
+                {
+                    string[] szls = szData[i].Split('\t');
+                    float fls = Convert.ToSingle(szls[3]);
+                    if (fls > -999990 && fls < 999990)
+                    {
+                        DateTime dtls = Convert.ToDateTime(szls[0]);
+                        DataRow dr = dt.NewRow();
+                        if (dt.Select($"StationID='{szls[1]}' and DateTime='{dtls.ToLocalTime()}'").Length > 0)
+                            break;
+                        dr["StationID"] = szls[1];
+                        dr["DateTime"] = dtls.ToLocalTime();
+                        dr["EVP_Big"] = Convert.ToSingle(szls[2]);
+                        dr["GST_Max"] = fls;
+                        dr["GST_Max_Otime"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[4])).ToLocalTime();
+                        dr["GST_Min"] = Convert.ToSingle(szls[5]);
+                        dr["GST_Min_OTime"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[6])).ToLocalTime();
+                        dr["GST_80cm"] = Convert.ToSingle(szls[7]);
+                        dr["GST_160cm"] = Convert.ToSingle(szls[8]);
+                        dr["GST_320cm"] = Convert.ToSingle(szls[9]);
+                        dr["LGST_Max"] = Convert.ToSingle(szls[10]);
+                        dr["LGST_Max_OTime"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[11])).ToLocalTime();
+                        dr["LGST_Min"] = Convert.ToSingle(szls[12]);
+                        dr["LGST_Min_OTime"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[13])).ToLocalTime();
+                        dr["VIS_HOR_1MI"] = Convert.ToSingle(szls[14]);
+                        dr["VIS_HOR_10MI"] = Convert.ToSingle(szls[15]);
+                        dr["VIS_Min"] = Convert.ToSingle(szls[16]);
+                        dr["VIS_Min_OTime"] = Convert.ToDateTime(CIMISSDateTimeMinuteConvert(dtls, szls[17])).ToLocalTime();
+                        dt.Rows.Add(dr);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _error += e.Message + "\n";
+                }
+            }
+
+            if (dt.Rows.Count == 0)
+                return "";
+            SqlBulkCopyByDatatable(_con, "SK_Other_Minute_LS2", dt);
+            string fhStr = DateTime.Now + "成功保存" + sDate + "至" + eDate + $"      {dt.Rows.Count}条其他分钟数据。\n";
+            统计信息入库("SK_Other_Minute", sDate, eDate);
+            dt = null;
+            return fhStr;
+        }
         #region  SqlBulkCopy批量快速入库
         /// <summary>
         /// SqlBulkCopy批量快速入库

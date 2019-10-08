@@ -26,8 +26,8 @@
   </YBTime>
   <OtherConfig>
     <DB>
-      <Server>172.18.142.202;Database=呼市气象资料数据库;</Server>
-      <Database>wgkaSJgG6Q5RUqsNZac23VZa4T71BY6WY0zW4jcAnHI=</Database>
+      <Server>.;Database=呼市气象资料数据库;</Server>
+      <Database>yqiihbLyGu3J7cbT3fJrAfGKbFVhL3NN8CDI14xD9/I=</Database>
     </DB>
   </OtherConfig>
 </XmlConfig>

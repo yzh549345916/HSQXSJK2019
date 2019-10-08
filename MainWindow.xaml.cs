@@ -15,6 +15,7 @@ namespace _2019HSQXSJK
     {
         System.Timers.Timer timer = new System.Timers.Timer(60000);
         string adminCodes = "";
+        StringToDisplay callDuration = new StringToDisplay();
         public MainWindow()
         {
 
@@ -25,7 +26,7 @@ namespace _2019HSQXSJK
                     ResourceManager = GridViewResources.ResourceManager
                 };
                 InitializeComponent();
-
+                t1.DataContext = callDuration;
                 Settheme settheme1 = new Settheme();
                 StyleManager.SetTheme(this, GetMyTheme("Crystal"));
                 settheme1.setTheme(settheme1.setLightOrDark("Crystal"));
@@ -35,23 +36,13 @@ namespace _2019HSQXSJK
                 timer.Enabled = true;//是否执行System.Timers.Timer.Elapsed事件；
                 数据库处理 sjkcl = new 数据库处理();
                 adminCodes = sjkcl.获取实况站点范围(0, 0, 0);
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += $"{DateTime.Now}  启动呼和浩特市气象资料数据库\n";
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text= $"{DateTime.Now}  启动呼和浩特市气象资料数据库";
+                
             }
             catch(Exception e)
             {
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += $"{DateTime.Now}  启动失败:{e.Message}\n";
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = $"{DateTime.Now}  启动失败:{e.Message}";
+                
             }
 
             //rkcs();
@@ -75,13 +66,36 @@ namespace _2019HSQXSJK
                 PRSMinuteRk();
 
             });
+            Task.Factory.StartNew(() =>
+            {
+                RHUMinuteRk();
+
+            });
             DateTime dateTime = DateTime.Now;
             if (dateTime.Minute %5==1)
             {
                 Task.Factory.StartNew(() =>
                 {
                     TEMMinuteRk_5minutes();
+                    
+                });
+                Task.Factory.StartNew(() =>
+                {
+                   WindMinuteRk_5minutes();
+                });
+                Task.Factory.StartNew(() =>
+                {
                     PRSMinuteRk_5minutes();
+                });
+                Task.Factory.StartNew(() =>
+                {
+                    RHUMinuteRk_5minutes();
+                   
+                });
+                Task.Factory.StartNew(() =>
+                {
+
+                    OtherMinuteRk_5minutes();
                 });
             }
                 //每天00:21恢复前三天的数据
@@ -89,7 +103,7 @@ namespace _2019HSQXSJK
             {
                 Task.Factory.StartNew(() =>
                 {
-                    HFRk();
+                   // HFRk();
                 });
             }
         }
@@ -98,54 +112,75 @@ namespace _2019HSQXSJK
         public void cs()
         {
             数据库处理 sjkcl = new 数据库处理();
-            DateTime dateTime = Convert.ToDateTime("2019-09-27 00:20:00");
+            DateTime dateTime = Convert.ToDateTime("2019-07-01 00:00:00");
             while (dateTime.CompareTo(DateTime.Now) <= 0)
             {
                 string str = sjkcl.分钟降水量入库(dateTime.AddMinutes(-4), dateTime);
                 dateTime = dateTime.AddMinutes(5);
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += str;
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = str+ callDuration.Text;
+                Thread.Sleep(100);
             }
         }
         public void temcs()
         {
             数据库处理 sjkcl = new 数据库处理();
-            DateTime dateTime = Convert.ToDateTime("2019-07-05 13:40:00");
+            DateTime dateTime = Convert.ToDateTime("2019-07-01 00:00:00");
             while (dateTime.CompareTo(DateTime.Now) <= 0)
             {
                 string str = sjkcl.分钟常规温度入库(dateTime.AddMinutes(-9), dateTime);
                 sjkcl.分钟其他温度入库(dateTime.AddMinutes(-9), dateTime);
                 dateTime = dateTime.AddMinutes(10);
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += str;
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = str + callDuration.Text;
+                Thread.Sleep(100);
             }
         }
         public void PRScs()
         {
             数据库处理 sjkcl = new 数据库处理();
-            DateTime dateTime = Convert.ToDateTime("2019-07-01 10:00:00");
+            DateTime dateTime = Convert.ToDateTime("2019-07-01 00:00:00");
             while (dateTime.CompareTo(DateTime.Now) <= 0)
             {
                 string str = sjkcl.分钟常规气压入库(dateTime.AddMinutes(-9), dateTime);
                 sjkcl.分钟其他气压入库(dateTime.AddMinutes(-9), dateTime);
                 dateTime = dateTime.AddMinutes(10);
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += str;
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = str + callDuration.Text;
+                Thread.Sleep(100);
+            }
+        }
+        public void Windcs()
+        {
+            数据库处理 sjkcl = new 数据库处理();
+            DateTime dateTime = Convert.ToDateTime("2019-07-01 00:00:00");
+            while (dateTime.CompareTo(DateTime.Now) <= 0)
+            {
+                string str = sjkcl.分钟其他风入库(dateTime.AddMinutes(-9), dateTime);
+                dateTime = dateTime.AddMinutes(10);
+                callDuration.Text = str + callDuration.Text;
+                Thread.Sleep(100);
+            }
+        }
+        public void Othercs()
+        {
+            数据库处理 sjkcl = new 数据库处理();
+            DateTime dateTime = Convert.ToDateTime("2019-07-01 00:00:00");
+            while (dateTime.CompareTo(DateTime.Now) <= 0)
+            {
+                string str = sjkcl.分钟其他资料入库(dateTime.AddMinutes(-9), dateTime);
+                dateTime = dateTime.AddMinutes(10);
+                callDuration.Text = str + callDuration.Text;
+                Thread.Sleep(100);
+            }
+        }
+        public void RHUcs()
+        {
+            数据库处理 sjkcl = new 数据库处理();
+            DateTime dateTime = Convert.ToDateTime("2019-07-01 00:00:00");
+            while (dateTime.CompareTo(DateTime.Now) <= 0)
+            {
+                callDuration.Text = sjkcl.分钟常规湿度入库(dateTime.AddMinutes(-9), dateTime) + callDuration.Text;
+                callDuration.Text = sjkcl.分钟其他湿度入库(dateTime.AddMinutes(-9), dateTime) + callDuration.Text;
+                dateTime = dateTime.AddMinutes(10);
+                Thread.Sleep(100);
             }
         }
         public void PreMinuteRk()
@@ -154,13 +189,7 @@ namespace _2019HSQXSJK
             string str = sjkcl.分钟降水量入库(DateTime.Now.AddMinutes(-4), DateTime.Now);
             if(str.Length>0)
             {
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += str;
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = str + callDuration.Text;
             }
         }
         public void TEMMinuteRk()
@@ -170,13 +199,7 @@ namespace _2019HSQXSJK
             
             if (str.Length > 0)
             {
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += str;
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = str + callDuration.Text;
             }
         }
         public void TEMMinuteRk_5minutes()
@@ -185,13 +208,26 @@ namespace _2019HSQXSJK
             string str=sjkcl.分钟其他温度入库(DateTime.Now.AddMinutes(-11), DateTime.Now);
             if (str.Length > 0)
             {
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += str;
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = str + callDuration.Text;
+            }
+        }
+        public void RHUMinuteRk()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str = sjkcl.分钟常规湿度入库(DateTime.Now.AddMinutes(-5), DateTime.Now);
+
+            if (str.Length > 0)
+            {
+                callDuration.Text = str + callDuration.Text;
+            }
+        }
+        public void RHUMinuteRk_5minutes()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str = sjkcl.分钟其他湿度入库(DateTime.Now.AddMinutes(-11), DateTime.Now);
+            if (str.Length > 0)
+            {
+                callDuration.Text = str + callDuration.Text;
             }
         }
         public void PRSMinuteRk()
@@ -201,13 +237,7 @@ namespace _2019HSQXSJK
 
             if (str.Length > 0)
             {
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += str;
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = str + callDuration.Text;
             }
         }
         public void PRSMinuteRk_5minutes()
@@ -216,13 +246,25 @@ namespace _2019HSQXSJK
             string str = sjkcl.分钟其他气压入库(DateTime.Now.AddMinutes(-11), DateTime.Now);
             if (str.Length > 0)
             {
-                t1.Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    t1.Text += str;
-                    //将光标移至文本框最后
-                    t1.Focus();
-                    t1.CaretIndex = t1.Text.Length;
-                }), DispatcherPriority.Normal);
+                callDuration.Text = str + callDuration.Text;
+            }
+        }
+        public void WindMinuteRk_5minutes()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str = sjkcl.分钟其他风入库(DateTime.Now.AddMinutes(-11), DateTime.Now);
+            if (str.Length > 0)
+            {
+                callDuration.Text = str + callDuration.Text;
+            }
+        }
+        public void OtherMinuteRk_5minutes()
+        {
+            数据库处理 sjkcl = new 数据库处理(adminCodes);
+            string str = sjkcl.分钟其他资料入库(DateTime.Now.AddMinutes(-11), DateTime.Now);
+            if (str.Length > 0)
+            {
+                callDuration.Text = str + callDuration.Text;
             }
         }
         /// <summary>
@@ -238,6 +280,14 @@ namespace _2019HSQXSJK
                 try
                 {
                     sjkcl.分钟降水量入库(dateTime.AddMinutes(-9), dateTime);
+                    sjkcl.分钟常规温度入库(dateTime.AddMinutes(-9), dateTime);
+                    sjkcl.分钟其他温度入库(dateTime.AddMinutes(-9), dateTime);
+                    sjkcl.分钟常规气压入库(dateTime.AddMinutes(-9), dateTime);
+                    sjkcl.分钟其他气压入库(dateTime.AddMinutes(-9), dateTime);
+                    sjkcl.分钟其他风入库(dateTime.AddMinutes(-9), dateTime);
+                    sjkcl.分钟常规湿度入库(dateTime.AddMinutes(-9), dateTime);
+                    sjkcl.分钟其他湿度入库(dateTime.AddMinutes(-9), dateTime);
+                    sjkcl.分钟其他资料入库(dateTime.AddMinutes(-9), dateTime);
                     dateTime = dateTime.AddMinutes(10);
                 }
                 catch
@@ -390,6 +440,38 @@ namespace _2019HSQXSJK
             {
                 PRScs();
             });
+        }
+
+        private void RadButton_Click_2(object sender, RoutedEventArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Windcs();
+            });
+        }
+
+        private void RadButton_Click_3(object sender, RoutedEventArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                RHUcs();
+            });
+            
+        }
+
+        private void RadButton_Click_4(object sender, RoutedEventArgs e)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Othercs();
+            });
+            
+        }
+
+        private void RadButton_Click_5(object sender, RoutedEventArgs e)
+        {
+            CIMISS获取数据 cIMISS = new CIMISS获取数据();
+            string myData = cIMISS.CIMISS_SK_Hour_byTimeRangeAndRegion_SURF_CHN_MUL_HOR(DateTime.Now.AddHours(-2), DateTime.Now, adminCodes, "EVP_Big,GST,GST_Max,GST_Max_Otime,GST_Min,GST_Min_OTime,GST_5cm,GST_10cm,GST_15cm,GST_20cm,GST_40Cm,GST_80cm,GST_160cm,GST_320cm,LGST,LGST_Max,LGST_Max_OTime,LGST_Min,LGST_Min_OTime,VIS_HOR_1MI,VIS_HOR_10MI,VIS_Min,VIS_Min_OTime,VIS,WEP_Now");
         }
     }
 }

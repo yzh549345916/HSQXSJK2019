@@ -11,14 +11,18 @@
         FontSize="20"
         FontFamily="楷体"
          navigation:RadWindowInteropHelper.ClipMaskCornerRadius="0" 
-        navigation:RadWindowInteropHelper.Title="Custom Window" 
+        navigation:RadWindowInteropHelper.Title="呼和浩特市气象资料数据库" 
         navigation:RadWindowInteropHelper.ShowInTaskbar="True"
         Height="550" Width="1000" >
     <Grid>
-        <TextBox x:Name="t1" HorizontalAlignment="Left" Height="450" Margin="46,31,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" TextChanged="T1_TextChanged_1" />
+        <TextBox x:Name="t1" MaxLines="4000" IsReadOnly="True" HorizontalAlignment="Left" Height="450" Margin="46,31,0,0" TextWrapping="Wrap" Text="{Binding Text}"  VerticalAlignment="Top" Width="700" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" VerticalContentAlignment="Top"  />
         <telerik:RadButton Content="分钟降水量" HorizontalAlignment="Left" Margin="800,53,0,0" VerticalAlignment="Top" Width="120" Height="30" Click="Button_Click" FontSize="15"/>
         <telerik:RadButton Content="分钟温度" HorizontalAlignment="Left" Margin="800,101,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click"/>
-        <telerik:RadButton Content="气压温度" HorizontalAlignment="Left" Margin="800,154,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_1"/>
+        <telerik:RadButton Content="分钟气压" HorizontalAlignment="Left" Margin="800,154,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_1"/>
+        <telerik:RadButton Content="分钟风" HorizontalAlignment="Left" Margin="800,204,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_2"/>
+        <telerik:RadButton Content="分钟相对湿度" HorizontalAlignment="Left" Margin="800,255,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_3" />
+        <telerik:RadButton Content="其他分钟资料" HorizontalAlignment="Left" Margin="800,309,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_4" />
+        <telerik:RadButton Content="小时" HorizontalAlignment="Left" Margin="800,366,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_5"  />
 
     </Grid>
 </telerik:RadWindow>
