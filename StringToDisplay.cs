@@ -11,7 +11,7 @@ namespace _2019HSQXSJK
 
     {
 
-        private string text;
+        private string text="";
 
         public string Text
 
@@ -23,20 +23,14 @@ namespace _2019HSQXSJK
 
             {
 
-                if (text != value)
-
-                {
-                    text = value;
-
-                    PropertyChanged(this, new PropertyChangedEventArgs("Text"));
-
-                }
+                text = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Text"));
 
             }
 
         }
-
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        public event PropertyChangedEventHandler PropertyChanged;
+       
 
     }
 

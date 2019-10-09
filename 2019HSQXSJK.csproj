@@ -167,6 +167,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="StringToDisplay.cs" />
+    <Compile Include="数据恢复\数据恢复ViewMode.cs" />
+    <Compile Include="数据恢复\数据恢复.xaml.cs">
+      <DependentUpon>数据恢复.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="数据恢复\数据恢复视图.cs" />
     <Compile Include="类\CIMISS获取数据.cs" />
     <Compile Include="类\ConfigInformation.cs" />
     <Compile Include="类\DecryptAndEncryptionHelper.cs" />
@@ -175,9 +180,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GridViewResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Settheme.cs" />
+    <Compile Include="类\Settheme.cs" />
     <Compile Include="类\XmlConfig.cs" />
     <Compile Include="类\数据库处理.cs" />
+    <Compile Include="数据恢复\资料种类.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -190,6 +196,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="数据恢复\数据恢复.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
