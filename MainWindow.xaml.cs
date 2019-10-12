@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.Navigation;
 
 namespace _2019HSQXSJK
 {
@@ -559,14 +560,12 @@ namespace _2019HSQXSJK
             settingsDialog.Content = new 数据恢复();
             settingsDialog.ResizeMode = ResizeMode.CanResize;
             settingsDialog.Header = "数据恢复";
-            settingsDialog.Owner = System.Windows.Application.Current.MainWindow;
             settingsDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             settingsDialog.HideMinimizeButton = false;
             settingsDialog.HideMaximizeButton = false;
             settingsDialog.CanClose = true;
-
-
-            settingsDialog.ShowDialog();
+            settingsDialog.Show();
+            RadWindowInteropHelper.SetShowInTaskbar(settingsDialog, true);
             //Task.Factory.StartNew(() =>
             //{
             //    DateTime dateTime = DateTime.Now;
@@ -576,7 +575,7 @@ namespace _2019HSQXSJK
             //        callDuration.Text = strLS + callDuration.Text;
             //    }
             //});
-          
+
             //string myData = cIMISS.CIMISS_SK_Hour_byTimeRangeAndRegion_SURF_CHN_MUL_HOR(DateTime.Now.AddHours(-2), DateTime.Now, adminCodes, "EVP_Big,GST,GST_Max,GST_Max_Otime,GST_Min,GST_Min_OTime,GST_5cm,GST_10cm,GST_15cm,GST_20cm,GST_40Cm,GST_80cm,GST_160cm,GST_320cm,LGST,LGST_Max,LGST_Max_OTime,LGST_Min,LGST_Min_OTime,VIS_HOR_1MI,VIS_HOR_10MI,VIS_Min,VIS_Min_OTime,VIS,WEP_Now");
         }
     }

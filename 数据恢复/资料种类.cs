@@ -20,6 +20,10 @@ namespace _2019HSQXSJK
             Name = name;
             Phone = phone;
         }
+        public 资料种类(string name)
+        {
+            Name = name;
+        }
 
         public string Name
         {

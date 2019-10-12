@@ -23,6 +23,8 @@ namespace _2019HSQXSJK
         public 数据恢复()
         {
             InitializeComponent();
+            sDatePic.SelectableDateEnd = DateTime.Now;
+            eDatePic.SelectableDateEnd = DateTime.Now;
         }
     }
 }

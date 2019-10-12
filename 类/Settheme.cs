@@ -140,14 +140,14 @@ namespace _2019HSQXSJK
             //"Telerik.Windows.Documents.Proofing",
             //"Telerik.Windows.Documents",
             //"Telerik.Windows.Cloud.Controls",
-            //"Telerik.Windows.Controls.Chart",
+            "Telerik.Windows.Controls.Chart",
             //"Telerik.Windows.Controls.ConversationalUI",
-           // "Telerik.Windows.Controls.Data",
+            "Telerik.Windows.Controls.Data",
            // "Telerik.Windows.Controls.DataVisualization",
             //"Telerik.Windows.Controls.Diagrams.Extensions",
             //"Telerik.Windows.Controls.Diagrams.Ribbon",
             //"Telerik.Windows.Controls.Diagrams",
-            //"Telerik.Windows.Controls.Docking",
+            "Telerik.Windows.Controls.Docking",
             //"Telerik.Windows.Controls.Expressions",
             //"Telerik.Windows.Controls.FileDialogs",
             //"Telerik.Windows.Controls.FixedDocumentViewers",
@@ -155,7 +155,7 @@ namespace _2019HSQXSJK
             //"Telerik.Windows.Controls.GanttView",
            // "Telerik.Windows.Controls.GridView",
            // "Telerik.Windows.Controls.ImageEditor",
-           // "Telerik.Windows.Controls.Input",
+            "Telerik.Windows.Controls.Input",
         };
     }
 }

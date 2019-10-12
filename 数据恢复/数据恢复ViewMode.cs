@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using Telerik.Windows.Controls;
 
 namespace _2019HSQXSJK
 {
-    class 数据恢复ViewMode
+    class 数据恢复ViewMode: ViewModelBase
     {
         private ObservableCollection<资料种类> agencies;
 
@@ -13,14 +14,18 @@ namespace _2019HSQXSJK
                 if (agencies == null)
                 {
                     agencies = new ObservableCollection<资料种类>();
-                    agencies.Add(new 资料种类("Exotic Liquids", "(171) 555-2222"));
-                    agencies.Add(new 资料种类("New Orleans Cajun Delights", "(100) 555-4822"));
-                    agencies.Add(new 资料种类("Grandma Kelly's Homestead", "(313) 555-5735"));
-                    agencies.Add(new 资料种类("Tokyo Traders", "(03) 3555-5011"));
-                    agencies.Add(new 资料种类("Cooperativa de Quesos 'Las Cabras'", "(98) 598 76 54"));
-                    agencies.Add(new 资料种类("Pavlova, Ltd.", "(03) 444-2343"));
-                    agencies.Add(new 资料种类("Specialty Biscuits, Ltd.", "(161) 555-4448"));
-                    agencies.Add(new 资料种类("PB Knäckebröd AB", "031-987 65 43"));
+                    agencies.Add(new 资料种类("小时降水量"));
+                    agencies.Add(new 资料种类("小时气温"));
+                    agencies.Add(new 资料种类("小时气压"));
+                    agencies.Add(new 资料种类("小时相对湿度"));
+                    agencies.Add(new 资料种类("小时风"));
+                    agencies.Add(new 资料种类("小时其他资料"));
+                    agencies.Add(new 资料种类("分钟降水量"));
+                    agencies.Add(new 资料种类("分钟气温"));
+                    agencies.Add(new 资料种类("分钟气压"));
+                    agencies.Add(new 资料种类("分钟相对湿度"));
+                    agencies.Add(new 资料种类("分钟风"));
+                    agencies.Add(new 资料种类("分钟其他资料"));
                 }
                 return agencies;
             }
