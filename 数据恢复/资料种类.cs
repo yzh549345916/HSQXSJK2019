@@ -10,15 +10,16 @@ namespace _2019HSQXSJK
     {
         private string name;
         private string phone;
-
+        private int _id;
         public 资料种类()
         {
         }
 
-        public 资料种类(string name, string phone)
+        public 资料种类(string name, string phone,int id)
         {
             Name = name;
-            Phone = phone;
+            SJKName = phone;
+            ID = id;
         }
         public 资料种类(string name)
         {
@@ -37,7 +38,7 @@ namespace _2019HSQXSJK
             }
         }
 
-        public string Phone
+        public string SJKName
         {
             get
             {
@@ -48,11 +49,22 @@ namespace _2019HSQXSJK
                 this.phone = value;
             }
         }
+        public int ID
+        {
+            get
+            {
+                return this._id;
+            }
+            set
+            {
+                this._id = value;
+            }
+        }
 
 
         public override string ToString()
         {
-            return string.Format("[名称 : {0}]", this.Name);
+            return this.Name;
         }
     }
 }

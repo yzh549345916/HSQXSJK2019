@@ -6,11 +6,11 @@
              xmlns:local="clr-namespace:_2019HSQXSJK"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             Height="400" Width="800">
+             Height="700" Width="900">
     <UserControl.DataContext>
         <local:数据恢复视图 />
     </UserControl.DataContext>
-    <StackPanel Margin="25,30,26,30">
+    <StackPanel Margin="25,30,26,10">
         <StackPanel  >
             <telerik:Label Content="选择资料种类" FontSize="15"  FontFamily="楷体" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0"  />
             <telerik:RadComboBox x:Name="dataCom" Height="30"  Width="Auto" MinWidth="100" VerticalAlignment="Center"  IsEditable="True" TextSearchMode="Contains"  IsFilteringEnabled="True" AllowMultipleSelection="True"  ItemsSource="{Binding Agencies}" DisplayMemberPath="Name" Padding="4,4,4,4" HorizontalAlignment="Center" Margin="0,10,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
@@ -26,13 +26,15 @@
             </StackPanel>
             <StackPanel  Margin="20,30,0,0" >
                 <telerik:Label Content="恢复" FontSize="15"  FontFamily="楷体" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0"  />
-                <telerik:RadPathButton  Height="30" Width="30"
-                                        PathGeometry="M241.126 822.397c155.063 155.063 407.51 154.039 563.806-2.257 43.886-43.886 75.065-95.462 94.459-150.193 0 0 23.26-30.052-4.598-57.888-16.321-16.321-42.903-16.217-59.35 0.229-24.89 24.869-22.403 49.341-22.403 49.341-15.464 36.049-37.741 69.903-67.207 99.369-123.403 123.424-322.707 124.218-445.105 1.798-122.4-122.421-121.605-321.703 1.797-445.105 91.199-91.199 223.713-115.127 336.122-72.057l-32.788 56.027c-8.548 14.629-8.652 31.159-0.271 45.662 8.358 14.482 22.716 22.674 39.643 22.569l211.571 11.766c16.927-0.083 33.666-7.146 42.214-21.755 8.547-14.607 6.374-32.434-1.985-46.937l-99.851-202.585c-8.38-14.503-27.48-27.856-44.659-23.614-16.446 4.033-26.415 9.487-34.962 24.095l-35.84 61.21c-144.969-61.147-319.404-32.35-438.314 86.539-156.318 156.297-157.342 408.724-2.279 563.786z" Margin="0,10,0,0">
+                <telerik:RadPathButton  Height="30" Width="35"
+                                        PathGeometry="M241.126 822.397c155.063 155.063 407.51 154.039 563.806-2.257 43.886-43.886 75.065-95.462 94.459-150.193 0 0 23.26-30.052-4.598-57.888-16.321-16.321-42.903-16.217-59.35 0.229-24.89 24.869-22.403 49.341-22.403 49.341-15.464 36.049-37.741 69.903-67.207 99.369-123.403 123.424-322.707 124.218-445.105 1.798-122.4-122.421-121.605-321.703 1.797-445.105 91.199-91.199 223.713-115.127 336.122-72.057l-32.788 56.027c-8.548 14.629-8.652 31.159-0.271 45.662 8.358 14.482 22.716 22.674 39.643 22.569l211.571 11.766c16.927-0.083 33.666-7.146 42.214-21.755 8.547-14.607 6.374-32.434-1.985-46.937l-99.851-202.585c-8.38-14.503-27.48-27.856-44.659-23.614-16.446 4.033-26.415 9.487-34.962 24.095l-35.84 61.21c-144.969-61.147-319.404-32.35-438.314 86.539-156.318 156.297-157.342 408.724-2.279 563.786z" Margin="0,10,0,0" Click="RadPathButton_Click">
 
                 </telerik:RadPathButton>
             </StackPanel >
         </StackPanel>
-        
+        <StackPanel HorizontalAlignment="Center" Margin="0,30,0,0"  >
+            <TextBox x:Name="t1" MaxLines="4000" IsReadOnly="True" HorizontalAlignment="Left" Height="450"  TextWrapping="Wrap" Text="{Binding Text}"  VerticalAlignment="Top" Width="750" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" VerticalContentAlignment="Top" HorizontalContentAlignment="Center"  />
+        </StackPanel >
 
 
 

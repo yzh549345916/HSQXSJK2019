@@ -13,19 +13,8 @@ namespace _2019HSQXSJK
             {
                 if (agencies == null)
                 {
-                    agencies = new ObservableCollection<资料种类>();
-                    agencies.Add(new 资料种类("小时降水量"));
-                    agencies.Add(new 资料种类("小时气温"));
-                    agencies.Add(new 资料种类("小时气压"));
-                    agencies.Add(new 资料种类("小时相对湿度"));
-                    agencies.Add(new 资料种类("小时风"));
-                    agencies.Add(new 资料种类("小时其他资料"));
-                    agencies.Add(new 资料种类("分钟降水量"));
-                    agencies.Add(new 资料种类("分钟气温"));
-                    agencies.Add(new 资料种类("分钟气压"));
-                    agencies.Add(new 资料种类("分钟相对湿度"));
-                    agencies.Add(new 资料种类("分钟风"));
-                    agencies.Add(new 资料种类("分钟其他资料"));
+                    数据库处理 sjkcl = new 数据库处理();
+                    agencies=sjkcl.获取数据库表信息();
                 }
                 return agencies;
             }

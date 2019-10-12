@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -47,7 +48,37 @@ namespace _2019HSQXSJK
            
 
         }
+        public ObservableCollection<资料种类> 获取数据库表信息()
+        {
+            ObservableCollection<资料种类> datalist = new ObservableCollection<资料种类>();
+            using (SqlConnection mycon = new SqlConnection(_con))
+            {
+                try
+                {
+                    mycon.Open(); //打开
+                    string sql = "select * from 数据库表信息"; //SQL查询语句 (Name,StationID,Date)。按照数据库中的表的字段顺序保存
+                    SqlCommand sqlman = new SqlCommand(sql, mycon);
+                    SqlDataReader sqlreader = sqlman.ExecuteReader();
+                    while (sqlreader.Read())
+                    {
+                        try
+                        {
+                            datalist.Add(new 资料种类(sqlreader.GetString(sqlreader.GetOrdinal("表名称")).Trim(), sqlreader.GetString(sqlreader.GetOrdinal("数据库表名称")).Trim(), sqlreader.GetInt32(sqlreader.GetOrdinal("序号"))));
+                        }
+                        catch
+                        {
 
+                        }
+                       
+                    }
+                }
+                catch 
+                {
+                   
+                }
+            }
+            return datalist;
+        }
         /// <summary>
         /// 按照要求获取实况站点范围
         /// </summary>
@@ -94,7 +125,7 @@ namespace _2019HSQXSJK
                 try
                 {
                     mycon.Open(); //打开
-                    string sql = $"select * from 获取入库个数统计信息 where 表名={表名} and 时间<={sDate} and 时间>={eDate}"; //SQL查询语句 (Name,StationID,Date)。按照数据库中的表的字段顺序保存
+                    string sql = $"select * from 入库个数统计信息 where 表名='{表名}' and 时间>='{sDate}' and 时间<='{eDate}'"; //SQL查询语句 (Name,StationID,Date)。按照数据库中的表的字段顺序保存
                     SqlCommand sqlman = new SqlCommand(sql, mycon);
                     SqlDataReader sqlreader = sqlman.ExecuteReader();
 
@@ -114,6 +145,7 @@ namespace _2019HSQXSJK
 
                     }
                 }
+                
                 catch (Exception e)
                 {
                     _error += e.Message + "\n";

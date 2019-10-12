@@ -15,14 +15,19 @@
         navigation:RadWindowInteropHelper.ShowInTaskbar="True"
         Height="550" Width="1000" >
     <Grid>
-        <TextBox x:Name="t1" MaxLines="4000" IsReadOnly="True" HorizontalAlignment="Left" Height="450" Margin="46,31,0,0" TextWrapping="Wrap" Text="{Binding Text}"  VerticalAlignment="Top" Width="700" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" VerticalContentAlignment="Top"  />
-        <telerik:RadButton Content="分钟降水量" HorizontalAlignment="Left" Margin="800,53,0,0" VerticalAlignment="Top" Width="120" Height="30" Click="Button_Click" FontSize="15"/>
-        <telerik:RadButton Content="分钟温度" HorizontalAlignment="Left" Margin="800,101,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click"/>
-        <telerik:RadButton Content="分钟气压" HorizontalAlignment="Left" Margin="800,154,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_1"/>
-        <telerik:RadButton Content="分钟风" HorizontalAlignment="Left" Margin="800,204,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_2"/>
-        <telerik:RadButton Content="分钟相对湿度" HorizontalAlignment="Left" Margin="800,255,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_3" />
-        <telerik:RadButton Content="其他分钟资料" HorizontalAlignment="Left" Margin="800,309,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_4" />
-        <telerik:RadButton Content="小时" HorizontalAlignment="Left" Margin="800,366,0,0" VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_5"  />
+        <StackPanel Orientation="Horizontal">
+            <TextBox x:Name="t1" MaxLines="4000" IsReadOnly="True" HorizontalAlignment="Left" Height="450" Margin="46,31,0,0" TextWrapping="Wrap" Text="{Binding Text}"  VerticalAlignment="Top" Width="700" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" VerticalContentAlignment="Top"  />
+            <StackPanel Margin="30,0,0,0" Width="200">
+                <Label  Height="30" Width="120" FontSize="15" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Margin="0,20,0,0">是否实时入库</Label>
+                <telerik:RadToggleSwitchButton x:Name="switch1"  Checked="RadToggleSwitchButton_Checked" Unchecked="RadToggleSwitchButton_Unchecked" HorizontalAlignment="Center" Height="25" VerticalAlignment="Top"  Width="auto" Margin="0,5,0,0"/>
+                <Label  Height="30" Width="120" FontSize="15" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Margin="0,20,0,0">是否智能恢复</Label>
+                <telerik:RadToggleSwitchButton x:Name="switch2"  Checked="switch2_Checked" Unchecked="switch2_Unchecked" HorizontalAlignment="Center" Height="25" VerticalAlignment="Top"  Width="auto" Margin="0,5,0,0"/>
+                <telerik:RadButton Content="数据恢复" HorizontalAlignment="Center"  VerticalAlignment="Top" Width="120" Height="30"  FontSize="15" RenderTransformOrigin="0.496,1.8" Click="RadButton_Click_5" Margin="0,20,0,0"  />
+            </StackPanel>
+        </StackPanel>
+        
+       
+        
 
     </Grid>
 </telerik:RadWindow>
